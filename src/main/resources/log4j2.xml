@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="60">
+    <Appenders>
+        <Console name="Console-Appender" target="SYSTEM_OUT">
+            <PatternLayout>
+                <pattern>
+                    %d %p [%c] (%13F:%L) - %m%n
+                </pattern>>
+            </PatternLayout>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.springframework.web" level="debug" additivity="false">
+            <AppenderRef ref="Console-Appender"/>
+        </Logger>
+        <Logger name="org.springframework.data.redis.core" level="error" additivity="false">
+            <AppenderRef ref="Console-Appender"/>
+        </Logger>
+        <Logger name="org.springframework.amqp.rabbit.core" level="error" additivity="false">
+            <AppenderRef ref="Console-Appender"/>
+        </Logger>
+        <Logger name="sk.demo" level="debug" additivity="false">
+            <AppenderRef ref="Console-Appender"/>
+        </Logger>
+        <Root>
+            <AppenderRef ref="Console-Appender"/>
+        </Root>
+    </Loggers>
+</Configuration>

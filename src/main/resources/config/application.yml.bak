@@ -1,0 +1,154 @@
+server:
+  port: ${PORT:9000}
+
+service:
+  name: DEMO   #exception에 명시할 서비스명 입니다.
+  
+# Log Level 설정
+logging: 
+  level:
+    sk:
+      demo: DEBUG
+
+# Local 구성 환경
+spring:
+  application: 
+    name: demo 
+#  rabbitmq: 
+#    addresses: 169.56.79.187:5672
+#    username: rmqadmin
+#    password: dahR5lioxeiC9oon
+  redis: 
+    host: 169.56.79.184
+    port: 6379
+    password: Kei1Ohg2leiNg6qu
+  cloud: 
+    bus: 
+      trace: 
+        enabled: true
+    stream: 
+#      rabbit: 
+#        bindings: 
+#          test: 
+#            consumer: 
+#              prefix: z
+      bindings:
+#        input: 
+#          binder: springCloudHystrixStream
+        springCloudHystrixInput:
+#          destination: spring.cloud.bus.topic
+          binder: springCloudHystrixStream
+        springCloudBusInput:
+#          destination: spring.cloud.bus.topic
+          binder: springCloudBus
+        springCloudBusOutput:
+#          destination: spring.cloud.bus.topic.output
+          binder: springCloudBus
+      binders:
+        springCloudBus:
+          type: rabbit
+          defaultCandidate: false
+          environment:
+            spring:
+              rabbitmq:
+                addresses: 169.56.79.187:5672
+                username: rmqadmin
+                password: dahR5lioxeiC9oon
+        springCloudHystrixStream:
+          type: rabbit
+          defaultCandidate: false
+          environment:
+            spring:
+              rabbitmq:
+#                host: "amqp://rabbitmq:password@localhost:5672"
+                addresses: localhost:5672
+                username: rabbitmq
+                password: password
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: "https://common-eureka-server.sk.kr.mybluemix.net/eureka"
+    enabled: true    
+    registryFetchIntervalSeconds: 5
+  instance:
+    preferIpAddress: true       
+    hostname: ${vcap.application.uris[0]:localhost}
+    ip-address: "${CF_INSTANCE_IP:127.0.0.1}"
+    nonSecurePort: ${CF_INSTANCE_PORT:9000}
+    metadataMap: 
+      instanceId: ${vcap.application.instance_id:${spring.application.name}:${spring.application.instance_id:${server.port}}}
+    leaseRenewalIntervalInSeconds: 1
+    lease-expiration-duration-in-seconds: 3
+    lease-renewal-interval-in-seconds: 3
+    
+#demo:
+#  ribbon:
+#    ServerListRefreshInterval: 1000
+  
+management:
+  security:
+    enabled: false
+    
+vcap:
+  application:
+    name: "${vcap.application.application_name:demo}"
+    instance:
+      index: "${vcap.application.instance_index:0}"
+    application:
+      id: "${vcap.application.application_id:local}"
+  service:
+    rabbitmq:
+      addresses: "${vcap.services.demo-rabbitmq-cluster.credentials.addresses:169.56.79.187:5672}"
+      username: "${vcap.services.demo-rabbitmq-cluster.credentials.username:rmqadmin}"
+      password: "${vcap.services.demo-rabbitmq-cluster.credentials.password:dahR5lioxeiC9oon}"
+    redis:
+      nodes: "${vcap.services.demo-redis-cluster.credentials.nodes:169.56.79.184}"
+    swift:
+      username: "${vcap.services.demo-swift.credentials.username:bffadmin}"
+      password: "${vcap.services.demo-swift.credentials.password:Yahtoov5Ahthiesa}"
+      authurl: "${vcap.services.demo-swift.credentials.authurl:http://169.56.79.181:5000/v3}"
+      project: "${vcap.services.demo-swift.credentials.project:bff}"
+      domain: "${vcap.services.demo-swift.credentials.domain:default}"
+      region: "${vcap.services.demo-swift.credentials.region:pgy}"
+#test: #service name
+#  ribbon:
+#    listOfServers: localhost:8082, localhost:8083
+
+#hystrix:
+#  stream:
+#    queue:
+#      send-id: true
+#  command:
+#    SimpleControlledFailCommand:
+#      circuitBreaker:
+#        errorThresholdPercentage: 50
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 10000
+#hystrix:
+##  command:
+#    demo: 
+#      execution:
+#        isolation: 
+#          thread: 
+#            timeoutInMilliseconds: 60000
+#        timeout: 
+#          enabled: true
+#      circuitBreaker: 
+#        enabled: true
+#  threadpool:
+#    default:
+#      coreSize: 10
+
+hystrix: 
+  threadpool: 
+    default: 
+      execution: 
+        isolation: 
+          strategy: THREAD
+          thread: 
+            timeoutInMilliseconds: 3000
+      coreSize: 10
+      maximumSize: 30 
+      allowMaximumSizeToDivergeFromCoreSize: true

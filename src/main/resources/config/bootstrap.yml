@@ -1,0 +1,6 @@
+spring: 
+  cloud: 
+    config: 
+      uri: https://common-config-server.sk.kr.mybluemix.net
+      name: demo
+      enabled: true

@@ -1,0 +1,14 @@
+---
+applications:
+- name: demo
+  memory: 512M
+  instances: 1
+  host: demo
+  domain: sk.kr.mybluemix.net
+  path: target/demo-0.0.1-SNAPSHOT.jar
+  services:
+  - demo-redis-cluster
+  - demo-rabbitmq-cluster
+  env:
+    SPRING_PROFILES_ACTIVE: dev
+    JAVA_OPTS: -Djava.security.egd=file:/dev/./urandom
